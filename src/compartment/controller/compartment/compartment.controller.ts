@@ -1,6 +1,9 @@
 import { Body, Controller, Get, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { CompartmentService } from 'src/compartment/service/compartment/compartment.service';
+import {ApiTags} from '@nestjs/swagger';
+import { CompartmentDto } from 'src/compartment/dtos/compartmentDto';
 
+@ApiTags('compartment')
 @Controller('compartment')
 export class CompartmentController {
     constructor(
@@ -8,7 +11,7 @@ export class CompartmentController {
     ) {}
     @Post('create')
     async createCompartment(
-        @Body() input,
+        @Body() input: CompartmentDto,
         @Res() res
     ) {
         try {

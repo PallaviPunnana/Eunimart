@@ -2,7 +2,13 @@ import { Body, Controller, Get, HttpStatus, Patch, Post, Query, Res } from '@nes
 import { ArchivesService } from 'src/archives/service/archives/archives.service';
 import { CompartmentService } from 'src/compartment/service/compartment/compartment.service';
 import { ProductService } from 'src/product/service/product/product.service';
+import {ApiTags} from '@nestjs/swagger';
+import { UpdateCompartmentDto } from 'src/product/dtos/updateProductDto';
+import { GetProductDto } from 'src/product/dtos/getProductDetailsDto';
+import { GetProductsDto } from 'src/product/dtos/getProductsDetailsDto';
+import { ProductDto } from 'src/product/dtos/createProductDto';
 
+@ApiTags('product')
 @Controller('product')
 export class ProductController {
     constructor(
@@ -11,8 +17,8 @@ export class ProductController {
         private readonly archiveService: ArchivesService
     ) {}
     @Post('create')
-    async createCompartment(
-        @Body() input,
+    async createProduct(
+        @Body() input: ProductDto,
         @Res() res
     ) {
         try {
@@ -25,11 +31,11 @@ export class ProductController {
     }
     @Get('details')
     async getProductDetails(
-        @Query() id: number,
+        @Query() input: GetProductDto,
         @Res() res
     ) {
         try {
-            const details = await this.productService.getProduct(id);
+            const details = await this.productService.getProduct(input.skuId);
             res.status(HttpStatus.OK).send({data: details});
         } catch (e) {
             console.log(e);
@@ -38,11 +44,11 @@ export class ProductController {
     }
     @Get('by-category')
     async getCategoryWiseProducts(
-        @Query() category: string,
+        @Query() input: GetProductsDto,
         @Res() res
     ) {
         try {
-            const details = await this.productService.getProductByCategory(category);
+            const details = await this.productService.getProductByCategory(input.category);
             res.status(HttpStatus.OK).send({data: details});
         } catch (e) {
             console.log(e);
@@ -51,7 +57,7 @@ export class ProductController {
     }
     @Patch()
     async updateProduct(
-        @Body() input,
+        @Body() input: UpdateCompartmentDto,
         @Res() res
     ) {
         try {
@@ -60,7 +66,7 @@ export class ProductController {
             const totalQuantity = (await this.compartmentService.getCompartmentDetails(input.compartmentId)).quantity
             await this.archiveService.logArchive({
                 skuId: input.skuId,
-                action: input.action,
+                action: input.operation,
                 quantity: input.quantity,
                 compartmentId: input.compartmentId,
                 before: previousQuantity,

@@ -1,6 +1,9 @@
 import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { ArchivesService } from 'src/archives/service/archives/archives.service';
+import {ApiTags} from '@nestjs/swagger';
+import { ArchiveDto } from 'src/archives/dtos/archiveDto';
 
+@ApiTags('archives')
 @Controller('archives')
 export class ArchivesController {
     constructor(
@@ -8,11 +11,11 @@ export class ArchivesController {
     ) {}
     @Get('details')
     async getCompartmentWiseDetails(
-        @Query() id: number,
+        @Query() input: ArchiveDto,
         @Res() res
     ) {
         try {
-            const details = await this.archiveService.getArchive(id);
+            const details = await this.archiveService.getArchive(input.skuId);
             res.status(HttpStatus.OK).send({data: details});
         } catch (e) {
             console.log(e);

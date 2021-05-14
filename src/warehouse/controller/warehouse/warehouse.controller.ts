@@ -1,6 +1,9 @@
 import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { CompartmentService } from 'src/compartment/service/compartment/compartment.service';
+import {ApiTags} from '@nestjs/swagger';
+import { WarehouseDto } from 'src/warehouse/dtos/warehouseDto';
 
+@ApiTags('warehouse')
 @Controller('warehouse')
 export class WarehouseController {
     constructor(
@@ -8,7 +11,7 @@ export class WarehouseController {
     ) {}
     @Post('add-product')
     async addProduct(
-        @Body() input,
+        @Body() input: WarehouseDto,
         @Res() res
     ) {
         try {
